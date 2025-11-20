@@ -129,6 +129,6 @@ boolean mouseInRect(float x, float y, float w, float h) {
 }
 
 void exit(){
-  println("fin");
+  println(fichiers.tree(fichiers.racine));
   super.exit();
 }

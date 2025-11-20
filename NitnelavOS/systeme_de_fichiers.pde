@@ -50,8 +50,10 @@ class SystemFichiers {
 
   String getChemin(Node node) {
     if (node == null) return "";
-    if (node.parent == null) return node.nom;
-    return getChemin(node.parent) + "/" + node.nom;
+    if (node.parent == null) return node.nom + "/";
+    if (node.estRepertoire)
+      return getChemin(node.parent) + node.nom + "/";
+    return getChemin(node.parent) + node.nom;
   }
 
   Node creerNode(String nom, boolean estRepertoire, Node parent) {
