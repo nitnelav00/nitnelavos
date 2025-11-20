@@ -1,4 +1,6 @@
 
+String []apps = {"Terminal", "AppTest", "RayTracing"};
+
 void creerApp(String nom, PVector pos) {
   switch (nom) {
   case "AppTest":
@@ -6,6 +8,9 @@ void creerApp(String nom, PVector pos) {
     return;
   case "Terminal":
     fenetres.add(0, new Window(pos, new Terminal()));
+    return;
+  case "RayTracing":
+    fenetres.add(0, new Window(pos, new RayTracing()));
     return;
   default:
     return;

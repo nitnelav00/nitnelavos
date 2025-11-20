@@ -1,6 +1,4 @@
 
-String []apps = {"Terminal", "AppTest"};
-
 boolean estUneApp(String nom) {
   for (int i =0; i<apps.length; i++)
     if (apps[i].equals(nom))
@@ -18,11 +16,15 @@ class Terminal implements GUIApp {
   String entree = "";     // L'entrée utilisateur
   String affichage;       // Le texte à afficher sur l'écran
   PFont font;             // La police d'écriture du terminal
+  Node position;
+  String positionTexte;
 
   PVector setup(int id) {
     this.id = id;
     texte = "Terminal Par Nitnelav00 (Couard Añó Presencía Valentin)\nTappez 'help' pour obtenir de l'aide et 'clear' pour effacer l'écran\n";
     font = createFont("Comfortaa Bold", 14);
+    position = fichiers.racine;
+    positionTexte = fichiers.getChemin(position);
 
     return new PVector(600, 600);
   }
@@ -38,14 +40,14 @@ class Terminal implements GUIApp {
       }
     }
     if (focus && touchesAppuyes[10]) {
-      texte += "> " + entree;
+      texte += positionTexte+"> " + entree;
       computeCommand();
       entree = "";
     }
     if (focus && millis()/500%2==0)
-      affichage = texte + "> " + entree + "_";
+      affichage = texte + positionTexte + "> " + entree + "_";
     else
-      affichage = texte + "> " + entree;
+      affichage = texte + positionTexte + "> " + entree;
   };
 
   void computeCommand() {
@@ -60,11 +62,10 @@ class Terminal implements GUIApp {
       else
         commands.append("");
     }
-    println(commands);
     switch (commands.get(0)) {
     case "help":
     case "h":
-      texte += "commandes disponibles :\nhelp, echo, clear/cls, exit/quit, top, close, kill";
+      texte += "commandes disponibles :\nhelp, echo, clear/cls, exit/quit, top, close, kill, proc, pkill, mkdir, ls, cd";
       for (String a : apps)
         texte += ", " + a;
       texte += "\n";
@@ -98,10 +99,60 @@ class Terminal implements GUIApp {
         }
       }
       break;
+    case "pkill":
+      if (commands.size() < 2) {
+        texte += "La commande pkill doit avoir l'ID du processus à fermer en argument\n";
+      } else {
+        try {
+          int id = Integer.parseInt(commands.get(1));
+          pdetruire(id);
+        }
+        catch (NumberFormatException e) {
+          texte += "Erreur : " + commands.get(1) + "n'est pas un entier\n";
+        }
+      }
+      break;
     case "top":
       for (Window w : fenetres) {
         texte += "Id : "+ str(w.id) + " | nom :\""+w.appli.getname()+"\"\n";
       }
+      break;
+    case "proc":
+      for (Processus w : process) {
+        texte += "Id : "+ str(w.getId()) + " | nom :\""+w.getname()+"\"\n";
+      }
+      break;
+    case "mkdir":
+      if (commands.size() < 2) {
+        texte += "La commande mkdir doit avoir le nom du fichier en argument\n";
+        break;
+      }
+      String nom = commands.get(1);
+      if (fichiers.creerNode(nom, true, position) != null)
+        texte += "le fichier " + nom + " a été crée\n";
+      else
+        texte += "le fichier " + nom + " n'a pas pu être crée\n";
+      break;
+    case "ls":
+      texte += position.listerEnfants() + "\n";
+      break;
+    case "cd":
+      if (commands.size() < 2) {
+        texte += "La commande cd doit avoir le nom du fichier en argument\n";
+        break;
+      }
+      if (commands.get(1).equals("..")) {
+        position = position.parent;
+        positionTexte = fichiers.getChemin(position);
+        return;
+      }
+      for (Node enfant : position.enfants){
+        if (enfant.nom.equals(commands.get(1))) {
+            position = enfant;
+            positionTexte = fichiers.getChemin(position);
+            return;
+          }}
+      texte += commands.get(1) + " n'éxiste pas\n";
       break;
     default:
       if (estUneApp(commands.get(0)) || commands.get(0).equals("")) {

@@ -1,11 +1,10 @@
 
-static int compteur = 0;
 
 class Window {
   PVector position; // Position de la fenètre
   PVector taille; // Taille de la fenètre
   GUIApp appli;
-  boolean deplacement = false; // Savoir si la fenêtre est en train de se faire déplacer
+  boolean deplacement = true; // Savoir si la fenêtre est en train de se faire déplacer
   PGraphics affichage; // Rendu graphique de la fenetre
 
   PVector mouse;
@@ -30,6 +29,8 @@ class Window {
       this.position = position;
     else
       this.position = new PVector(width/2. - taille.x/2., height/2. - taille.y/2.);
+    
+    draw();
   }
 
   // ====================================
@@ -42,6 +43,7 @@ class Window {
     if (pmouseX >= position.x && pmouseX <= position.x + taille.x && pmouseY >= position.y && pmouseY <= position.y + 22 * scaleY && mousePressed && deplacement) {
       position.x += mouseX - pmouseX;
       position.y += mouseY - pmouseY;
+      redraw();
     } else deplacement = false;
 
     if (focus) {
