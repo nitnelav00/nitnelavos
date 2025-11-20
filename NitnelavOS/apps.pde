@@ -7,6 +7,13 @@ interface GUIApp {
   void draw(PGraphics pg, PVector taille);
 }
 
+interface Processus {
+  String getname();
+  void setup(int id);
+  int getId();
+  void update();
+}
+
 // ====================================
 // une application simple pour tester
 // ====================================
@@ -37,4 +44,27 @@ class AppTest implements GUIApp {
     pg.fill(255, 0, 0);
     pg.circle(x, y, 60);
   };
+}
+
+class Animation implements Processus {
+  int id;
+  void setup(int id) {
+    this.id = id;
+  };
+  
+  int getId() {return id;}
+  
+  String getname(){return "Animation";}
+  
+  void update(){
+    
+  };
+}
+
+class RayTracing implements GUIApp {
+  int id;
+  String getname(){return "RayTracing";};
+  PVector setup(int id){this.id = id; return new PVector(400,400);};
+  void update(PVector mouse, PVector pmouse, PVector taille, boolean focus){};
+  void draw(PGraphics pg, PVector taille){};
 }
