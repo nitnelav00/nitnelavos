@@ -82,4 +82,17 @@ class SystemFichiers {
     nouveauParent.ajouterEnfant(node);
     return true;
   }
+  
+  String tree(Node debut){
+    String texte = "";
+    ArrayList<Node> nodes = new ArrayList();
+    nodes.add(debut);
+    while (nodes.size() > 0) {
+      Node node = nodes.remove(nodes.size()-1);
+      for (Node e : node.enfants)
+        nodes.add(e);
+      texte += getChemin(node) + "\n";
+    }
+    return texte;
+  }
 }

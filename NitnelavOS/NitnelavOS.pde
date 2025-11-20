@@ -42,9 +42,10 @@ void setup() {
   fondEcran.beginDraw();
   fondEcran.image(fondEcranImage, 0, 0, width, height);
   fondEcran.endDraw();
-
-  fichiers = new SystemFichiers("nitnelavOS");
   redraw();
+  
+  fichiers = new SystemFichiers("nitnelavOS");
+  
 }
 
 void draw() {
@@ -125,4 +126,9 @@ void pdetruire(int id) {
 
 boolean mouseInRect(float x, float y, float w, float h) {
   return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
+}
+
+void exit(){
+  println("fin");
+  super.exit();
 }

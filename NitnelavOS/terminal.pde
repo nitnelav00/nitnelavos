@@ -65,7 +65,7 @@ class Terminal implements GUIApp {
     switch (commands.get(0)) {
     case "help":
     case "h":
-      texte += "commandes disponibles :\nhelp, echo, clear/cls, exit/quit, top, close, kill, proc, pkill, mkdir, ls, cd";
+      texte += "commandes disponibles :\nhelp, echo, clear/cls, exit/quit, top, close, kill, proc, pkill, mkdir, ls, cd, tree";
       for (String a : apps)
         texte += ", " + a;
       texte += "\n";
@@ -153,6 +153,9 @@ class Terminal implements GUIApp {
             return;
           }}
       texte += commands.get(1) + " n'éxiste pas\n";
+      break;
+    case "tree":
+      texte += fichiers.tree(position);
       break;
     default:
       if (estUneApp(commands.get(0)) || commands.get(0).equals("")) {
