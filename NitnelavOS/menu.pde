@@ -1,6 +1,14 @@
+/**
+ * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2025.
+ */
+ 
+import java.lang.Thread;
+String []apps = {"Terminal", "AppTest", "RayTracing"}; // Liste des applications disponibles
 
-String []apps = {"Terminal", "AppTest", "RayTracing"};
-
+/**
+ * Si le programme avec le nom demandé existe, il le crée dans une fenêtre et l'ajoute dans la liste des fenêtres.
+ * la position de la fenêtre est optionnelle
+ */
 void creerApp(String nom, PVector pos) {
   switch (nom) {
   case "AppTest":
@@ -17,7 +25,11 @@ void creerApp(String nom, PVector pos) {
   }
 }
 
+/**
+ * La bare du menu est sensé être en bas et utilisée pour lancer les programmes (ne fonctionne pas encore).
+ */
 void menu() {
+  panic("non implémenté");
   push();
 
   fill(60, 200, 50);

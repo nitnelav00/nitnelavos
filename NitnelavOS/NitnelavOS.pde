@@ -2,69 +2,66 @@
  * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2025.
  */
 
-SystemFichiers fichiers;
+SystemFichiers fichiers; // Arbre de fichiers de l'OS
 
 ArrayList<Window> fenetres; // Liste des fenêtres actives
-ArrayList<Processus> process;
 boolean click = false; // Lire le front montant d'un click de souris
 IntList aDetruire; // Liste des fenêtres à détruire
-IntList paDetruire; // Liste des processus à détruire
-PGraphics fondEcran;
+PGraphics fondEcran; // image du fond d'écran
 
-float scaleX;
-float scaleY;
-float scaleMin;
+/* mise à l'échelle de l'écran par rapport à l'affichage */
+float scaleX; // en x
+float scaleY; // en y
+float scaleMin; // le minimum des deux
 
-boolean[] touchesAppuyes; // les touches appuyées
-boolean touche;
-char lettreAppuyee = 65535; // les touches appuyées
-boolean lettre;
-static int compteur = 0;
+boolean[] touchesAppuyes; // liste des touches appuyées
+boolean touche; // savoir si une touche viens d'être pressée
+char lettreAppuyee = 65535; // la lettre qui viens juste d'être pressée (utile pour que l'utilisateur puisse écrire du texte dans le terminal)
+boolean lettre; // savoir si une lettre viens d'être pressé
 
 void setup() {
-  size(1920, 1080);
-  //fullScreen();
-  scaleX = sqrt(width/1920.);
-  scaleY = sqrt(height/1080.);
-  scaleMin = min(scaleX, scaleY);
+  size(1920, 1080); // taille pour tester
+  //fullScreen(); // pleine écran (mode normal)
+  
+  /**
+   * mise à l'échelle de l'écran par rapport à l'affichage
+   * avec une racine carré parce que la surface d'un carré est de c*c
+   */
+  scaleX = sqrt(width/1920.); // en x
+  scaleY = sqrt(height/1080.); // en y
+  scaleMin = min(scaleX, scaleY); // le minimum des ceux
 
-  aDetruire = new IntList();
-  paDetruire = new IntList();
+  aDetruire = new IntList(); // liste des fenêtres à détruire
 
-  fenetres = new ArrayList<Window>();
-  process = new ArrayList<Processus>();
+  fenetres = new ArrayList<Window>(); // liste des fenêtres présent sur l'écran
 
-  touchesAppuyes = new boolean[1024];
+  touchesAppuyes = new boolean[65535]; // liste des touches, true quand la touche est appuyée sinon false
 
-  PImage fondEcranImage;
-  fondEcranImage = loadImage("img1.jpeg");
+  PImage fondEcranImage; // précalcule l'image du fond d'écran pour les performances
+  fondEcranImage = loadImage("img1.jpeg"); // l'image est dans data/img1.png
   fondEcran = createGraphics(width, height);
   fondEcran.beginDraw();
   fondEcran.image(fondEcranImage, 0, 0, width, height);
   fondEcran.endDraw();
-  redraw();
+  redraw(); // dessiner le fond d'écran
   
-  fichiers = new SystemFichiers("nitnelavOS");
-  
+  fichiers = new SystemFichiers("nitnelavOS"); // initialiser le système de fichiers de l'OS
 }
 
 void draw() {
-  if (fenetres.size() < 1)
+  if (fenetres.size() < 1) // Si aucune application n'est ouverte, ouvrir le terminal
     creerApp("Terminal", null);
 
+  /* Les fenetres à dértuire sont listé selon leur Id et sont détruites au début de la boucle */
   if (aDetruire.size() > 0) {
     fenetres.remove(aDetruire.get(0));
     aDetruire.remove(0);
     redraw();
   }
-  if (paDetruire.size() > 0) {
-    process.remove(paDetruire.get(0));
-    paDetruire.remove(0);
-  }
-
-  for (int i = process.size() - 1; i>=0; i--) {
-    process.get(i).update();
-  }
+  
+  /**
+   * On fait une boucle pour savoir quelle fenêtre obtient le focus
+   */
   int focus = -1;
   for (int i = 0; i<fenetres.size(); i++) {
     fenetres.get(i).update(focus == -1 && fenetres.get(i).sourisDansFenetre());
@@ -72,44 +69,66 @@ void draw() {
       focus = i;
   }
 
-
+  /**
+   * La fenetre qui obtien le focus de l'utilsateur en passant sa souris dessus est placée au premier plan
+   */
   if (focus != -1 && focus != 0 && focus < fenetres.size()) {
     Window temp = fenetres.get(focus);
     fenetres.remove(focus);
     fenetres.add(0, temp);
   }
 
-
+  // les fenêtres se font dessinées sur l'écran
   for (int i = fenetres.size() - 1; i>=0; i--) {
     fenetres.get(i).draw();
   }
 
+  // change le titre de la fenêtre pour afficher les fps (utile pour l'optimisation)
   windowTitle("Programme de Valentin, FPS:" + nf(frameRate, 0, 1));
   // menu();
 
-  // Remettre les variables à 0 pour n'avoir que le front montant (le momment où on appuie)
+  /**
+   * Remettre les variables à 0 pour n'avoir que le front montant (le momment où on appuie)
+   */
   click = false;
-  touchesAppuyes = new boolean[1024];
+  touchesAppuyes = new boolean[65535];
   lettreAppuyee = 65535;
   touche=false;
 }
 
+/**
+ * Redessiner le fond d'écran quand besoin (mouvement ou suppression d'une fenêtre)
+ * Ne pas le redessiner à chaque fois à cause de pertes de performances
+ */
 void redraw() {
-  background(14);
   image(fondEcran, 0, 0);
 }
 
+/**
+ * Mettre la valeur click au momment où la un boutton de la souris est appuyée
+ * Cette variable repassera à false à la fin de l'image suivante
+ */
 void mousePressed(MouseEvent event) {
   if (event.getButton() == 37)
     click = true;
 }
 
+/**
+ * Quand une touche est appuyée, la variable touche se met à true,
+ * La variable lettreAppuyee prends la valeur de la lettre
+ * La valeur de la touche correspondante dans touchesAppuyes se met à true
+ * Ces variables repasseront à false à la fin de l'image suivante
+ */
 void keyPressed() {
   lettreAppuyee = key;
   touchesAppuyes[keyCode] = true;
   touche=true;
 }
 
+/**
+ * Fonction pour détruire la fenêtre avec l'ID correspondant en la stoquant dans une liste
+ * @id : int
+ */
 void detruire(int id) {
   for (int i = 0; i<fenetres.size(); i++) {
     if (fenetres.get(i).id == id)
@@ -117,18 +136,27 @@ void detruire(int id) {
   }
 }
 
-void pdetruire(int id) {
-  for (int i = 0; i<process.size(); i++) {
-    if (process.get(i).getId() == id)
-      paDetruire.append(i);
-  }
-}
-
+/**
+ * Fonction pour savoir si la souris est dans un rectangle à la position x,y et de taille w,h (en pixels)
+ */
 boolean mouseInRect(float x, float y, float w, float h) {
   return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
 }
 
+/**
+ * Cette fonction est appelée à la fermeture de l'OS
+ * à changer
+ */
 void exit(){
   println(fichiers.tree(fichiers.racine));
   super.exit();
+}
+
+/**
+ * Renvoie l'erreur dans une fenêtre séparée et ferme le programme
+ */
+void panic(Object err) {
+  javax.swing.JOptionPane.showInternalMessageDialog(null, err,
+             "Erreur", javax.swing.JOptionPane.ERROR_MESSAGE);
+  exit();
 }

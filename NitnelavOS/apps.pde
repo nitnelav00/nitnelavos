@@ -1,5 +1,10 @@
-
-// === Une interface pour créer plusieurs applications et pouvoir les mettres dans une fenêtre ===
+/**
+ * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2025.
+ */
+ 
+/**
+ * L'interface qui sert à définir la structure d'une application
+ */
 interface GUIApp {
   String getname();
   PVector setup(int id);
@@ -7,16 +12,9 @@ interface GUIApp {
   void draw(PGraphics pg, PVector taille);
 }
 
-interface Processus {
-  String getname();
-  void setup(int id);
-  int getId();
-  void update();
-}
-
-// ====================================
-// une application simple pour tester
-// ====================================
+/**
+ * Une petite application simple pour tester si les fenêtres s'affichent bien
+ */
 class AppTest implements GUIApp {
 
   float x, y;
@@ -46,22 +44,7 @@ class AppTest implements GUIApp {
   };
 }
 
-class Animation implements Processus {
-  int id;
-  void setup(int id) {
-    this.id = id;
-  };
-  
-  int getId() {return id;}
-  
-  String getname(){return "Animation";}
-  
-  void update(){
-    
-  };
-}
-
-class RayTracing implements GUIApp {
+class RayTracing implements GUIApp { // Ne fonctionne pas encore
   int id;
   String getname(){return "RayTracing";};
   PVector setup(int id){this.id = id; return new PVector(400,400);};
