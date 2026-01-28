@@ -24,7 +24,7 @@ class Terminal implements GUIApp {
   Node position;          // Le dossier courant
   String positionTexte;   // le nom du dossier courant
 
-  PVector setup(int id) {
+  PVector setup(int id, StringList arguments) {
     this.id = id;
     texte = "Terminal Par Nitnelav00 (Couard Añó Presencía Valentin)\nTappez 'help' pour obtenir de l'aide et 'clear' pour effacer l'écran\n";
     font = createFont("Comfortaa Bold", 14);
@@ -67,12 +67,14 @@ class Terminal implements GUIApp {
         break;
       if (c!=32) // Si le character n'est pas un saut de ligne, l'ajouter à la fin de la liste 
         commands.set(commands.size()-1, commands.get(commands.size()-1) + c);
+      else
+        commands.append("");
     }
     
     switch (commands.get(0)) {
     case "help": // Si la commande est help ou h lister les commandes disponibles
     case "h":
-      texte += "commandes disponibles :\nhelp, echo, clear/cls, exit/quit, top, close, kill, mkdir,\nls, cd, tree";
+      texte += "commandes disponibles :\nhelp, echo, clear/cls, exit/quit, top, shutdown, kill, mkdir,\nls, cd, tree";
       for (String a : apps)
         texte += ", " + a;
       texte += "\n";
@@ -88,10 +90,10 @@ class Terminal implements GUIApp {
       break;
     case "exit":
     case "quit":
-      exit(); // Fermer la fenêtre Processing
-      break;
-    case "close":
       detruire(id); // fermer le Terminal dans lequel la commande a été entrée
+      break;
+    case "shutdown":
+      exit();
       break;
     case "kill":
       if (commands.size() < 2) {
@@ -148,9 +150,9 @@ class Terminal implements GUIApp {
       break;
     default:
       if (estUneApp(commands.get(0)) || commands.get(0).equals("")) { // crée une application si elle existe
-        if (commands.size() !=3)
-          creerApp(commands.get(0), null);
-        else creerApp(commands.get(0), new PVector(int(commands.get(1)), int(commands.get(2)))); // crée l'application avec la position si donnée en paramètre
+        float x=random(1.);
+        float y=random(1.);
+        creerApp(commands.get(0), new PVector(x, y), commands); // crée l'application avec la position si donnée en paramètre
       } else texte+="La commande \"" + commands.get(0) + "\" n'existe pas\n";
     }
   }
@@ -159,7 +161,7 @@ class Terminal implements GUIApp {
     return "Terminal " + str(id);
   }
 
-  void draw(PGraphics pg, PVector taille) {
+  void draw(PGraphics pg, float width, float height) {
     pg.background(0);
 
     pg.textFont(font);

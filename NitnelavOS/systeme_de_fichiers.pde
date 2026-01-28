@@ -11,6 +11,7 @@ class Node {
   boolean estDossier; // si true c'est un dossier, sinon c'est un dossier
   Node parent; // le parent
   ArrayList<Node> enfants; // Les enfants si c'est un dossier
+  String contenu = "";
 
   Node(String nom, boolean dossier, Node parent) {
     this.nom = nom;
@@ -21,6 +22,7 @@ class Node {
       this.enfants = new ArrayList<Node>();
     } else {
       this.enfants = null; // Pas besoin d'enfants si c'est un fichier
+      contenu = "";
     }
   }
 
@@ -79,6 +81,17 @@ class SystemFichiers {
       return newNode;
     }
     return null;
+  }
+  
+  String lireContenu(Node node) {
+    return node.contenu;
+  }
+  
+  boolean modifierContenu(Node node, String contenu) {
+    if (node.estDossier)
+      return false;
+    node.contenu = contenu;
+    return true;
   }
 
   void supprimerNode(Node node) {

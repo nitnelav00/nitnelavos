@@ -1,5 +1,8 @@
 /**
  * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2025.
+ *
+ * Comme c'est le fichier principal il y a des fonctions de base comme setup(), draw() etc.
+ * La plupart des variables globales utilisés dans l'entiereté du programme sont définies ici.
  */
 
 SystemFichiers fichiers; // Arbre de fichiers de l'OS
@@ -8,6 +11,7 @@ ArrayList<Window> fenetres; // Liste des fenêtres actives
 boolean click = false; // Lire le front montant d'un click de souris
 IntList aDetruire; // Liste des fenêtres à détruire
 PGraphics fondEcran; // image du fond d'écran
+boolean fondSale = true;
 
 /* mise à l'échelle de l'écran par rapport à l'affichage */
 float scaleX; // en x
@@ -20,9 +24,9 @@ char lettreAppuyee = 65535; // la lettre qui viens juste d'être pressée (utile
 boolean lettre; // savoir si une lettre viens d'être pressé
 
 void setup() {
-  size(1920, 1080); // taille pour tester
-  //fullScreen(); // pleine écran (mode normal)
-  
+  size(1920, 1080, P2D); // taille pour tester
+  //fullScreen(P2D); // pleine écran (mode normal)
+
   /**
    * mise à l'échelle de l'écran par rapport à l'affichage
    * avec une racine carré parce que la surface d'un carré est de c*c
@@ -39,18 +43,27 @@ void setup() {
 
   PImage fondEcranImage; // précalcule l'image du fond d'écran pour les performances
   fondEcranImage = loadImage("img1.jpeg"); // l'image est dans data/img1.png
-  fondEcran = createGraphics(width, height);
+  fondEcran = createGraphics(width, height, P2D);
   fondEcran.beginDraw();
   fondEcran.image(fondEcranImage, 0, 0, width, height);
   fondEcran.endDraw();
-  redraw(); // dessiner le fond d'écran
-  
+  print("chargé\n");
+
   fichiers = new SystemFichiers("nitnelavOS"); // initialiser le système de fichiers de l'OS
+  fondSale = true;
+  redraw();
+  menu();
 }
 
 void draw() {
-  if (fenetres.size() < 1) // Si aucune application n'est ouverte, ouvrir le terminal
-    creerApp("Terminal", null);
+  if (frameCount <= 1)
+    return;
+   
+  if (fondSale) {
+    image(fondEcran, 0, 0); // Redessiner le fond si l'écran est sale
+    fondSale = false;
+  }
+  
 
   /* Les fenetres à dértuire sont listé selon leur Id et sont détruites au début de la boucle */
   if (aDetruire.size() > 0) {
@@ -68,7 +81,7 @@ void draw() {
     if (fenetres.get(i).sourisDansFenetre() && focus == -1)
       focus = i;
   }
-
+  
   /**
    * La fenetre qui obtien le focus de l'utilsateur en passant sa souris dessus est placée au premier plan
    */
@@ -82,10 +95,10 @@ void draw() {
   for (int i = fenetres.size() - 1; i>=0; i--) {
     fenetres.get(i).draw();
   }
-
+  
   // change le titre de la fenêtre pour afficher les fps (utile pour l'optimisation)
   windowTitle("Programme de Valentin, FPS:" + nf(frameRate, 0, 1));
-  // menu();
+  menu();
 
   /**
    * Remettre les variables à 0 pour n'avoir que le front montant (le momment où on appuie)
@@ -101,7 +114,17 @@ void draw() {
  * Ne pas le redessiner à chaque fois à cause de pertes de performances
  */
 void redraw() {
+  if (fondEcran == null) {
+    println("erreur du fond d'écran");
+    PImage fondEcranImage; // précalcule l'image du fond d'écran pour les performances
+    fondEcranImage = loadImage("img1.jpeg"); // l'image est dans data/img1.png
+    fondEcran = createGraphics(width, height, P2D);
+    fondEcran.beginDraw();
+    fondEcran.image(fondEcranImage, 0, 0, width, height);
+    fondEcran.endDraw();
+  }
   image(fondEcran, 0, 0);
+  fondSale = true;
 }
 
 /**
@@ -144,10 +167,10 @@ boolean mouseInRect(float x, float y, float w, float h) {
 }
 
 /**
- * Cette fonction est appelée à la fermeture de l'OS
+ * Cette fonction est appelée à la fermeture du programme
  * à changer
  */
-void exit(){
+void exit() {
   println(fichiers.tree(fichiers.racine));
   super.exit();
 }
@@ -157,6 +180,6 @@ void exit(){
  */
 void panic(Object err) {
   javax.swing.JOptionPane.showInternalMessageDialog(null, err,
-             "Erreur", javax.swing.JOptionPane.ERROR_MESSAGE);
+    "Erreur", javax.swing.JOptionPane.ERROR_MESSAGE);
   exit();
 }
