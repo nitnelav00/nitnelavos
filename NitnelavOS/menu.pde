@@ -3,7 +3,7 @@
  */
  
 import java.lang.Thread;
-String []apps = {"Terminal", "AppTest", "Fractal"}; // Liste des applications disponibles
+String []apps = {"Terminal", "AppTest", "Fractal", "Cours_13"}; // Liste des applications disponibles
 
 /**
  * Si le programme avec le nom demandé existe, il le crée dans une fenêtre et l'ajoute dans la liste des fenêtres.
@@ -19,6 +19,9 @@ void creerApp(String nom, PVector pos, StringList arguments) {
     break;
   case "Fractal":
     fenetres.add(0, new Window(pos, new Fractal(), arguments));
+    break;
+  case "Cours_13":
+    fenetres.add(0, new Window(pos, new Cours_13(), arguments));
     break;
   default:
     break;

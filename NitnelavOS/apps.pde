@@ -86,7 +86,7 @@ class Fractal implements GUIApp { // Ne fonctionne pas encore
     if (width*height <= pixelsCalcules) // Si la fractale a finie de se faire dessiner inutile de continuer
       return;
     float x, y;
-    pg.strokeCap(PROJECT);
+    pg.strokeCap(PROJECT); // Sinon ça fait des bugs d'affichage
     
     for (int i=0; i<SPEED; i++) {
       x = a%width;
