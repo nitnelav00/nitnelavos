@@ -53,6 +53,7 @@ void setup() {
   fondSale = true;
   redraw();
   menu();
+  chargerLeSystemeDeFichier();
 }
 
 void draw() {
@@ -172,6 +173,7 @@ boolean mouseInRect(float x, float y, float w, float h) {
  */
 void exit() {
   println(fichiers.tree(fichiers.racine));
+  sauvegarderLeSystemeDeFichier();
   super.exit();
 }
 

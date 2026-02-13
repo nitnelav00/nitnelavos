@@ -11,7 +11,7 @@ class Cours_13 implements GUIApp {
   }
   
   int id;
-  PVector setup(int id, StringList arguments){
+  IntList setup(int id, StringList arguments){
     this.id = id;
     
     int width = 400;
@@ -25,7 +25,7 @@ class Cours_13 implements GUIApp {
   bUp = new Bouton(width / 2 + 2 * t, height / 2 - t, t, color(0, 0, 255), '+');
   bDown = new Bouton(width / 2 + 2 * t, height / 2 + t, t, color(0, 0, 255), '-');
   
-  return new PVector(width, height);
+  return new IntList(width, height);
   }
   
   void update(PVector mouse, PVector pmouse, PVector taille, boolean focus) {

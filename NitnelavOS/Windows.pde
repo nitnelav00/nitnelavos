@@ -32,9 +32,17 @@ class Window {
     pmouse = new PVector(0., 0.); // position précédente de la souris quand elle est dans la fenêtre
 
     id = compteur++; // obtenir un ID puis incrémenter le compteur
-    this.taille = appli.setup(id, arguments); // créer l'application avec l'id en argument et obtenir la taille de la fenêtre de l'appli
+    IntList taille_l = appli.setup(id, arguments); // créer l'application avec l'id en argument et obtenir la taille de la fenêtre de l'appli
+    
+    if (taille_l.size() == 1)
+      this.taille = new PVector(taille_l.get(0), taille_l.get(0));
+    if (taille_l.size() > 1)
+      this.taille = new PVector(taille_l.get(0), taille_l.get(1));
 
-    affichage = createGraphics(int(taille.x), int(taille.y), P2D); // Créer l'interface graphique avec la même taille que la fenètre
+    if (taille_l.size() < 3 || taille_l.get(3) != 2)
+      affichage = createGraphics(int(taille.x), int(taille.y), P2D); // Créer l'interface graphique avec la même taille que la fenètre
+    else
+      affichage = createGraphics(int(taille.x), int(taille.y), P3D);
     affichage.beginDraw();
     affichage.background(0); // ou ce que tu veux
     affichage.endDraw();
@@ -50,7 +58,7 @@ class Window {
   /**
    * Fonction de mise à jour de la fenêtre
    */
-  void update(boolean focus) { //<>//
+  void update(boolean focus) { //<>// //<>//
     
     if (mouseInRect(position.x, position.y, taille.x, 22 * scaleY) && click && focus) // Si l'utilisateur clique sur le bandeau en haut de la fenêtre, elle est en déplacement
       deplacement = true;
@@ -71,7 +79,7 @@ class Window {
 
 
     if (appli != null) {
-      appli.update(mouse, pmouse, taille, focus); // Mettre à jour le programme de l'application //<>//
+      appli.update(mouse, pmouse, taille, focus); // Mettre à jour le programme de l'application //<>// //<>//
       if (affichage == null){
         affichage = createGraphics(int(taille.x), int(taille.y), P2D);
         println("erreur affichage");

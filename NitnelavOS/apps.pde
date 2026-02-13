@@ -7,7 +7,7 @@
  */
 interface GUIApp {
   String getname();
-  PVector setup(int id, StringList arguments);
+  IntList setup(int id, StringList arguments);
   void update(PVector mouse, PVector pmouse, PVector taille, boolean focus);
   void draw(PGraphics pg, float width, float height);
 }
@@ -20,9 +20,9 @@ class AppTest implements GUIApp {
   float x, y;
   int id;
 
-  PVector setup(int id, StringList arguments) {
+  IntList setup(int id, StringList arguments) {
     this.id = id;
-    return new PVector(600, 600);
+    return new IntList(600, 600);
   }
   void update(PVector mouse, PVector pmouse, PVector taille, boolean focus) {
     x = mouse.x;
@@ -69,14 +69,14 @@ class Fractal implements GUIApp { // Ne fonctionne pas encore
     );
 }
 
-  PVector setup(int id, StringList arguments) {
+  IntList setup(int id, StringList arguments) {
     this.id = id;
     if (espacesEntrePixels <= 0) // il ne peux pas y avoir 0 ou moins espaces entre les pixels
       espacesEntrePixels = 1;
     else while ((400*400)%espacesEntrePixels!=1)  // Pour être sûr que tous les pixels seront dessinés
       espacesEntrePixels+=1;
     randomColor = random(0., 12.);
-    return new PVector(400, 400);
+    return new IntList(400, 400);
   };
 
   void update(PVector mouse, PVector pmouse, PVector taille, boolean focus) { // Rien

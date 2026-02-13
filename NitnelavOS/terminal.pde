@@ -24,14 +24,14 @@ class Terminal implements GUIApp {
   Node position;          // Le dossier courant
   String positionTexte;   // le nom du dossier courant
 
-  PVector setup(int id, StringList arguments) {
+  IntList setup(int id, StringList arguments) {
     this.id = id;
     texte = "Terminal Par Nitnelav00 (Couard Añó Presencía Valentin)\nTappez 'help' pour obtenir de l'aide et 'clear' pour effacer l'écran\n";
     font = createFont("Comfortaa Bold", 14);
     position = fichiers.racine; // Le dossier courant est la racine quand il viens d'être crée
     positionTexte = fichiers.getChemin(position);
 
-    return new PVector(600, 600); // le terminal à une talle de 600x600 px
+    return new IntList(600, 600); // le terminal à une talle de 600x600 px
   }
   
   void update(PVector mouse, PVector pmouse, PVector taille, boolean focus) {
@@ -74,7 +74,7 @@ class Terminal implements GUIApp {
     switch (commands.get(0)) {
     case "help": // Si la commande est help ou h lister les commandes disponibles
     case "h":
-      texte += "commandes disponibles :\nhelp, echo, clear/cls, exit/quit, top, shutdown, kill, mkdir,\nls, cd, tree";
+      texte += "commandes disponibles :\nhelp, echo, clear/cls, exit/quit, top, shutdown, kill, mkdir,\nls, cd, tree, cat";
       for (String a : apps)
         texte += ", " + a;
       texte += "\n";
@@ -133,20 +133,51 @@ class Terminal implements GUIApp {
         break;
       }
       if (commands.get(1).equals("..")) { // remonter au parent si .. est choisie
-        position = position.parent;
-        positionTexte = fichiers.getChemin(position);
-        return;
+        if (position.parent != null) {  // <- Protection
+          position = position.parent;
+          positionTexte = fichiers.getChemin(position);
+        } else {
+          texte += "Vous êtes déjà à la racine\n";
+        }
+        break;
       }
+      if (position.enfants == null) break;
       for (Node enfant : position.enfants){
         if (enfant.nom.equals(commands.get(1)) && enfant.estDossier) { // regarder quel enfant correspond au nom demandé puis s'y déplacer s'il est un dossier
             position = enfant;
             positionTexte = fichiers.getChemin(position);
             return;
-          }}
+          }
+        }
       texte += "Le dossier " + commands.get(1) + " n'éxiste pas\n";
       break;
     case "tree":
       texte += fichiers.tree(position);
+      break;
+    case "cat":
+      if (commands.size() < 2) {
+        texte += "La commande cd doit avoir le nom du fichier en argument\n";
+        break;
+      }
+      String nomFichier = commands.get(1);
+      boolean fichierTrouve = false;
+      if (position.enfants != null) {
+        for (Node enfant : position.enfants) {
+          if (enfant.nom.equals(nomFichier)) {
+            if (enfant.estDossier) {
+              texte += nomFichier + " est un dossier (utilisez cd)\n";
+            } else {
+              texte += "Contenu de " + nomFichier + ":\n";
+              texte += enfant.contenu + "\n";
+            }
+            fichierTrouve = true;
+            break;
+          }
+        }
+      }
+      if (!fichierTrouve) {
+        texte += "Le fichier \"" + nomFichier + "\" n'existe pas\\n";
+      }
       break;
     default:
       if (estUneApp(commands.get(0)) || commands.get(0).equals("")) { // crée une application si elle existe
