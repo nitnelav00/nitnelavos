@@ -24,7 +24,7 @@ char lettreAppuyee = 65535; // la lettre qui viens juste d'être pressée (utile
 boolean lettre; // savoir si une lettre viens d'être pressé
 
 void setup() {
-  size(1920, 1080, P2D); // taille pour tester
+  size(1920, 1080); // taille pour tester
   //fullScreen(P2D); // pleine écran (mode normal)
 
   /**
@@ -43,11 +43,15 @@ void setup() {
 
   PImage fondEcranImage; // précalcule l'image du fond d'écran pour les performances
   fondEcranImage = loadImage("img1.jpeg"); // l'image est dans data/img1.png
-  fondEcran = createGraphics(width, height, P2D);
+  fondEcran = createGraphics(width, height);
   fondEcran.beginDraw();
   fondEcran.image(fondEcranImage, 0, 0, width, height);
   fondEcran.endDraw();
   print("chargé\n");
+  
+  fondFlappy = loadImage("flappy/fond.png");
+  solFlappy = loadImage("flappy/sol.png");
+  tuyauFlappy = loadImage("flappy/tuyau.png");
 
   fichiers = new SystemFichiers("nitnelavOS"); // initialiser le système de fichiers de l'OS
   fondSale = true;

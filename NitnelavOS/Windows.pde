@@ -39,10 +39,7 @@ class Window {
     if (taille_l.size() > 1)
       this.taille = new PVector(taille_l.get(0), taille_l.get(1));
 
-    if (taille_l.size() < 3 || taille_l.get(3) != 2)
-      affichage = createGraphics(int(taille.x), int(taille.y), P2D); // Créer l'interface graphique avec la même taille que la fenètre
-    else
-      affichage = createGraphics(int(taille.x), int(taille.y), P3D);
+    affichage = createGraphics(int(taille.x), int(taille.y)); // Créer l'interface graphique avec la même taille que la fenètre
     affichage.beginDraw();
     affichage.background(0); // ou ce que tu veux
     affichage.endDraw();
