@@ -52,6 +52,7 @@ void setup() {
   fondFlappy = loadImage("flappy/fond.png");
   solFlappy = loadImage("flappy/sol.png");
   tuyauFlappy = loadImage("flappy/tuyau.png");
+  joueurFlappy = loadImage("flappy/joueur.png");
 
   fichiers = new SystemFichiers("nitnelavOS"); // initialiser le système de fichiers de l'OS
   fondSale = true;
