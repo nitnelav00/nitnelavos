@@ -24,14 +24,14 @@ class Terminal implements GUIApp {
   Node position;          // Le dossier courant
   String positionTexte;   // le nom du dossier courant
 
-  IntList setup(int id, StringList arguments) {
+  PVector setup(int id, StringList arguments) {
     this.id = id;
     texte = "Terminal Par Nitnelav00 (Couard Añó Presencía Valentin)\nTappez 'help' pour obtenir de l'aide et 'clear' pour effacer l'écran\n";
     font = createFont("Comfortaa Bold", 14);
     position = fichiers.racine; // Le dossier courant est la racine quand il viens d'être crée
     positionTexte = fichiers.getChemin(position);
 
-    return new IntList(600, 600); // le terminal à une talle de 600x600 px
+    return new PVector(600, 600); // le terminal à une talle de 600x600 px
   }
   
   void update(PVector mouse, PVector pmouse, PVector taille, boolean focus) {

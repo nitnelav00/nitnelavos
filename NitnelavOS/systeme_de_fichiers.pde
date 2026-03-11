@@ -146,7 +146,7 @@ class SystemFichiers {
         }
       }
       String chemin = getChemin(node);
-      chemin = chemin.replace(";", "§"); // Les séparateurs sont des ";" alors on remplace les ";" par des "§"
+      chemin = chemin.replace(';', char(4)); // Les séparateurs sont des ";" alors on remplace les ";" par un caharactère impossible à écrire
       int isDir = node.estDossier ? 1 : 0;
       String contenu = "";
       if (!node.estDossier && node.contenu != null) {
@@ -160,11 +160,10 @@ class SystemFichiers {
   /**
    * La méthode sauvegarderTexte permet de charger l'ensemble des dossiers et fichiers depuis un texte
    */
-  void chargerDepuisString(String data) {
+  void chargerDepuisString(String[] lignes) {
     // on repart d'une racine propre
     racine = new Node("NitnelavOS", true, null);
-
-    String[] lignes = data.split("\n");
+    
     for (int i = 0; i < lignes.length; i++) {
       String ligne = lignes[i];
       if (ligne == null || ligne.trim().length() == 0) continue;
@@ -173,7 +172,7 @@ class SystemFichiers {
       if (parts.length < 2) continue;
 
       String cheminComplet = parts[0];
-      cheminComplet = cheminComplet.replace("§", ";");
+      cheminComplet = cheminComplet.replace(char(4), ';'); // Même chause qu'à la sauvegarde mais à l'inverse
       boolean isDir = parts[1].equals("1");
       String contenu = parts.length == 3 ? parts[2] : "";
       contenu = contenu.replace("\\n", "\n");
@@ -221,4 +220,18 @@ class SystemFichiers {
       }
     }
   }
+}
+
+void sauvegarderLeSystemeDeFichier() {
+  String data = fichiers.sauvegarderTexte();
+  String[] lignes = split(data, '\n');
+  saveStrings("data/sauvegarde.txt", lignes);
+}
+
+void chargerLeSystemeDeFichier() {
+  String[] lignes = loadStrings("data/sauvegarde.txt");
+  if (lignes == null) return;
+
+
+  fichiers.chargerDepuisString(lignes); // méthode dans SystemFichiers
 }

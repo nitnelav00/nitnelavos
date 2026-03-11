@@ -1,5 +1,3 @@
 NitnelavOS/;1;
-NitnelavOS/help;0;bonjour tout le monde !!!
-NitnelavOS/coucou/;1;
-NitnelavOS/dos§0§coucou/;1;
+NitnelavOS/cHuou/;1;
 

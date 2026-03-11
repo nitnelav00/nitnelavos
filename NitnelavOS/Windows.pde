@@ -32,12 +32,7 @@ class Window {
     pmouse = new PVector(0., 0.); // position précédente de la souris quand elle est dans la fenêtre
 
     id = compteur++; // obtenir un ID puis incrémenter le compteur
-    IntList taille_l = appli.setup(id, arguments); // créer l'application avec l'id en argument et obtenir la taille de la fenêtre de l'appli
-    
-    if (taille_l.size() == 1)
-      this.taille = new PVector(taille_l.get(0), taille_l.get(0));
-    if (taille_l.size() > 1)
-      this.taille = new PVector(taille_l.get(0), taille_l.get(1));
+    this.taille = appli.setup(id, arguments); // créer l'application avec l'id en argument et obtenir la taille de la fenêtre de l'appli
 
     affichage = createGraphics(int(taille.x), int(taille.y)); // Créer l'interface graphique avec la même taille que la fenètre
     affichage.beginDraw();
@@ -62,7 +57,11 @@ class Window {
     
     
     // déplacer la fenêtre si besoin
-    if (pmouseX >= position.x && pmouseX <= position.x + taille.x && pmouseY >= position.y && pmouseY <= position.y + 22 * scaleY && mousePressed && deplacement) {
+    if (pmouseX >= position.x && pmouseX <= position.x + taille.x
+          && pmouseY >= position.y
+          && pmouseY <= position.y + 22 * scaleY
+          && mousePressed &&
+          deplacement) {
       position.x += mouseX - pmouseX;
       position.y += mouseY - pmouseY;
       redraw(); // ne pas oublier de redessiner le fon d'écran pour le pas laisser des traces
@@ -117,8 +116,9 @@ class Window {
     textSize(20 * scaleY);
     text(appli.getname(), position.x+18*scaleMin, position.y+18*scaleY);
 
+    final int TAILLE_BOUTON = 28;
     // Colorier le boutton de croix si la souris le survole
-    if (mouseInRect(position.x + taille.x - 28* scaleMin, position.y, 28 * scaleMin, 22 * scaleMin))
+    if (mouseInRect(position.x + taille.x - TAILLE_BOUTON * scaleMin, position.y, TAILLE_BOUTON * scaleMin, 22 * scaleMin))
       fill(120, 120, 200);
     rect(position.x + taille.x - 28*scaleMin, position.y, 28*scaleMin, 22*scaleMin);
 

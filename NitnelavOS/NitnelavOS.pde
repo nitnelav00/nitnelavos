@@ -24,8 +24,8 @@ char lettreAppuyee = 65535; // la lettre qui viens juste d'être pressée (utile
 boolean lettre; // savoir si une lettre viens d'être pressé
 
 void setup() {
-  size(1920, 1080); // taille pour tester
-  //fullScreen(P2D); // pleine écran (mode normal)
+  //size(1920, 1080); // taille pour tester
+  fullScreen(P2D); // pleine écran (mode normal)
 
   /**
    * mise à l'échelle de l'écran par rapport à l'affichage
@@ -174,7 +174,6 @@ boolean mouseInRect(float x, float y, float w, float h) {
 
 /**
  * Cette fonction est appelée à la fermeture du programme
- * à changer
  */
 void exit() {
   println(fichiers.tree(fichiers.racine));

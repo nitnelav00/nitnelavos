@@ -37,24 +37,37 @@ void creerApp(String nom, PVector pos, StringList arguments) {
 void menu() {
   //panic("non implémenté");
   push();
+  
+  final int TAILLE_DE_LA_BARRE = 30;
 
-  fill(80, 190, 112);
-  rect(0, height - 30, width, height);
+  fill(#50BE70);
+  rect(0, height - TAILLE_DE_LA_BARRE, width, height);
   
   for (int i=0; i < apps.length; i++) {
     noFill();
     stroke(255, 0, 0);
     strokeWeight(4);
-    rect(2 + i*88, height - 30, 85, 28);
+    rect(2 + i*88, height - TAILLE_DE_LA_BARRE, 85, 28);
   
     fill(0);
     textSize(20);
     text(apps[i], 6 + i*88, height - 10);
     
-    if (click && mouseX < 2 + (i+1)*88 && mouseX > 2 + i*88 && mouseY > height - 30) {
+    if (click && mouseX < 2 + (i+1)*88 && mouseX > 2 + i*88 && mouseY > height - TAILLE_DE_LA_BARRE) {
       creerApp(apps[i],null,null);
       redraw();
     }
   }
+  
+  if (mouseX > width-80 && mouseY > height-TAILLE_DE_LA_BARRE) {
+    fill(#CEA53C);
+    if (click) exit();
+  }
+  else
+    fill(#F5C448);
+  rect(width-80, height-TAILLE_DE_LA_BARRE, 80, TAILLE_DE_LA_BARRE);
+  fill(0);
+  text("Quitter", width-75, height-10);
+  
   pop();
 }
