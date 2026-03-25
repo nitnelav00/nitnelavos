@@ -29,40 +29,40 @@ class Rect {
     }
     centre = depuisLeCentre;
   }
-  
+
   boolean collision(Rect autre) { // collision avec un autre rectangle
     return this.x <= autre.x + autre.w &&
-           this.x + this.w >= autre.x &&
-           this.y <= autre.y + autre.h &&
-           this.y + this.h >= autre.y;
+      this.x + this.w >= autre.x &&
+      this.y <= autre.y + autre.h &&
+      this.y + this.h >= autre.y;
   }
-  
-  void draw(PGraphics pg){
+
+  void draw(PGraphics pg) {
     pg.rect(x, y, w, h);
   }
-  
+
   // Getters
-  float getX(){
+  float getX() {
     if (centre)
       return x + w/2;
     else
       return x;
   }
-  float getY(){
+  float getY() {
     if (centre)
       return y + h/2;
     else
       return y;
   }
-  
+
   // Setters
-  void setX(float nouveauX){
+  void setX(float nouveauX) {
     if (centre)
       x = nouveauX - w/2;
     else
       x = nouveauX;
   }
-  void setY(float nouveauY){
+  void setY(float nouveauY) {
     if (centre)
       y = nouveauY - h/2;
     else

@@ -1,4 +1,4 @@
-/**
+/** //<>// //<>// //<>// //<>//
  * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2025.
  */
 
@@ -24,7 +24,7 @@ class Window {
    * @position    : PVector (optionnel)
    * @application : GUIApp
    */
-  Window(PVector position, GUIApp application, StringList arguments) {
+  Window(PVector position, GUIApp application) {
 
     this.appli = application;
 
@@ -32,7 +32,7 @@ class Window {
     pmouse = new PVector(0., 0.); // position précédente de la souris quand elle est dans la fenêtre
 
     id = compteur++; // obtenir un ID puis incrémenter le compteur
-    this.taille = appli.setup(id, arguments); // créer l'application avec l'id en argument et obtenir la taille de la fenêtre de l'appli
+    this.taille = appli.setup(id); // créer l'application avec l'id en argument et obtenir la taille de la fenêtre de l'appli
 
     affichage = createGraphics(int(taille.x), int(taille.y)); // Créer l'interface graphique avec la même taille que la fenètre
     affichage.beginDraw();
@@ -50,18 +50,17 @@ class Window {
   /**
    * Fonction de mise à jour de la fenêtre
    */
-  void update(boolean focus) { //<>// //<>//
-    
+  void update(boolean focus) { //<>//
+
     if (mouseInRect(position.x, position.y, taille.x, 22 * scaleY) && click && focus) // Si l'utilisateur clique sur le bandeau en haut de la fenêtre, elle est en déplacement
       deplacement = true;
-    
-    
+
     // déplacer la fenêtre si besoin
     if (pmouseX >= position.x && pmouseX <= position.x + taille.x
-          && pmouseY >= position.y
-          && pmouseY <= position.y + 22 * scaleY
-          && mousePressed &&
-          deplacement) {
+      && pmouseY >= position.y
+      && pmouseY <= position.y + 22 * scaleY
+      && mousePressed &&
+      deplacement) {
       position.x += mouseX - pmouseX;
       position.y += mouseY - pmouseY;
       redraw(); // ne pas oublier de redessiner le fon d'écran pour le pas laisser des traces
@@ -75,23 +74,22 @@ class Window {
 
 
     if (appli != null) {
-      appli.update(mouse, pmouse, taille, focus); // Mettre à jour le programme de l'application //<>// //<>//
-      if (affichage == null){
+      appli.update(mouse, pmouse, taille, focus); // Mettre à jour le programme de l'application //<>//
+      if (affichage == null) {
         affichage = createGraphics(int(taille.x), int(taille.y), P2D);
         println("erreur affichage");
       }
       affichage.beginDraw();
-        appli.draw(affichage, taille.x, taille.y); // dessinner le contenu dans l'image qui sera affichée plus tard
+      appli.draw(affichage, taille.x, taille.y); // dessinner le contenu dans l'image qui sera affichée plus tard
       affichage.endDraw();
     }
-    
+
     // Détruire la fenêtre si la croix est cliquée
     if (mouseInRect(position.x + taille.x - 28*scaleMin, position.y, 28*scaleMin, 22*scaleMin)  && click && focus)
       detruire(id);
     // Détruire la fenêtre si elle sort de l'écran // finalement non
     // if (!(position.x + taille.x>0 && position.y+taille.y>0 && position.x < width && position.y < height))
     //   detruire(id);
-     
   }
 
   /**

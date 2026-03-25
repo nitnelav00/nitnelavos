@@ -7,7 +7,7 @@
  */
 interface GUIApp {
   String getname();
-  PVector setup(int id, StringList arguments);
+  PVector setup(int id);
   void update(PVector mouse, PVector pmouse, PVector taille, boolean focus);
   void draw(PGraphics pg, float width, float height);
 }
@@ -20,7 +20,7 @@ class AppTest implements GUIApp {
   float x, y;
   int id;
 
-  PVector setup(int id, StringList arguments) {
+  PVector setup(int id) {
     this.id = id;
     return new PVector(600, 600);
   }
@@ -53,7 +53,7 @@ class Fractal implements GUIApp { // Ne fonctionne pas encore
   int a=0;
   int pixelsCalcules=0;
   int espacesEntrePixels=10;
-  
+
   int PRECISION=800;
   int DIST = 200;
   float randomColor = 0;
@@ -61,15 +61,15 @@ class Fractal implements GUIApp { // Ne fonctionne pas encore
   String getname() {
     return "Fractal";
   };
-  
-  PVector pow2i(PVector v){ // Fonction z**2 pour z un nombre complexe
-  return new PVector(
-    v.x*v.x - v.y*v.y,
-    v.x*v.y*2.0
-    );
-}
 
-  PVector setup(int id, StringList arguments) {
+  PVector pow2i(PVector v) { // Fonction z**2 pour z un nombre complexe
+    return new PVector(
+      v.x*v.x - v.y*v.y,
+      v.x*v.y*2.0
+      );
+  }
+
+  PVector setup(int id) {
     this.id = id;
     if (espacesEntrePixels <= 0) // il ne peux pas y avoir 0 ou moins espaces entre les pixels
       espacesEntrePixels = 1;
@@ -85,14 +85,14 @@ class Fractal implements GUIApp { // Ne fonctionne pas encore
   void draw(PGraphics pg, float width, float height) {
     if (width*height <= pixelsCalcules) // Si la fractale a finie de se faire dessiner inutile de continuer
       return;
-      
+
     float x, y;
     pg.strokeCap(PROJECT); // Sinon ça fait des bugs d'affichage
-    
+
     for (int i=0; i<SPEED; i++) {
       x = a%width;
       y = a/height;
-      PVector uv = new PVector(x*3./width - 1.8,y*3./height -1.5);
+      PVector uv = new PVector(x*3./width - 1.8, y*3./height -1.5);
       PVector b = uv.copy();
 
       float count = 0;

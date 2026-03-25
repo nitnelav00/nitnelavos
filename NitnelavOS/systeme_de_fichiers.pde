@@ -7,11 +7,11 @@
  * Le système de fichiers est représenté sous forme d'arbre
  */
 class Node {
-  String nom;
-  boolean estDossier; // si true c'est un dossier, sinon c'est un dossier
-  Node parent; // le parent
-  ArrayList<Node> enfants; // Les enfants si c'est un dossier
-  String contenu = "";
+  String nom;              // Nom du fichier/dossier
+  boolean estDossier;      // true = dossier, false = fichier
+  Node parent;             // Référence vers le parent
+  HashMap<String, Node> enfants; // Liste des enfants (uniquement pour les dossiers)
+  String contenu = "";     // Contenu du fichier (inutile pour un dossier)
 
   Node(String nom, boolean dossier, Node parent) {
     this.nom = nom;
@@ -19,7 +19,7 @@ class Node {
     this.parent = parent;
 
     if (dossier) {
-      this.enfants = new ArrayList<Node>();
+      this.enfants = new HashMap<String, Node>();
     } else {
       this.enfants = null; // Pas besoin d'enfants si c'est un fichier
       contenu = "";
@@ -29,20 +29,20 @@ class Node {
   void ajouterEnfant(Node enfant) {
     if (estDossier && enfants != null) { // n'ajoute les enfants seulement si c'est un dossier
       enfant.parent = this;
-      enfants.add(enfant);
+      enfants.put(enfant.nom, enfant);
     }
   }
 
   void retirerEnfant(Node enfant) {
     if (estDossier && enfants != null) {
-      enfants.remove(enfant);
+      enfants.remove(enfant.nom);
       enfant.parent = null;
     }
   }
 
   String listerEnfants() { // Liste les sous-dossiers
     String enf = "";
-    for (Node e : enfants) {
+    for (Node e : enfants.values()) {
       enf += e.nom + "    ";
     }
     return enf;
@@ -72,22 +72,28 @@ class SystemFichiers {
    * Crée un fichier ou dossier avec le nom @nom dans le dossier @parent
    */
   Node creerNode(String nom, boolean estDossier, Node parent) {
-    if (parent !=null && parent.estDossier && nom != "") { // vérifier si le parent est un dossier
-      for (Node enfant : parent.enfants) // vérifier que le fichier ou dossier n'éxiste pas encore
-        if (enfant.nom.equals(nom))
-          return null;
+
+    if (parent != null && parent.estDossier && nom != "") {
+
+      // Vérifie existence
+      if (parent.enfants.containsKey(nom))
+        return null;
+
       Node newNode = new Node(nom, estDossier, parent);
-      parent.ajouterEnfant(newNode); // l'ajouter aux enfants s'il est crée
+      parent.ajouterEnfant(newNode);
+
       return newNode;
     }
     return null;
   }
-  
+
   String lireContenu(Node node) {
+    if (node == null) return "";
     return node.contenu;
   }
-  
+
   boolean modifierContenu(Node node, String contenu) {
+    if (node == null) return false;
     if (node.estDossier)
       return false;
     node.contenu = contenu;
@@ -105,55 +111,68 @@ class SystemFichiers {
     if (node == null || nouveauParent == null || !nouveauParent.estDossier) { // ne peux déplacer le Node que si le nouveau parent est un dossier
       return false;
     }
+    if (estAncetre(node, nouveauParent)) return false;
     if (node.parent != null) {
       node.parent.retirerEnfant(node);
     }
     nouveauParent.ajouterEnfant(node);
     return true;
   }
-  
+
   /**
    * La méthode tree permet d'afficher l'arbre des dossiers, fishiers et sous-dossiers présents dans le Node debut
    * Utilise un parcours en profondeur
    */
-  String tree(Node debut){
+  String tree(Node debut) {
     String texte = "";
     ArrayList<Node> nodes = new ArrayList();
     nodes.add(debut);
     while (nodes.size() > 0) {
       Node node = nodes.remove(nodes.size()-1);
       if (node == null || node.enfants == null) continue; // protection
-      for (Node e : node.enfants)
+      for (Node e : node.enfants.values())
         nodes.add(e);
       texte += getChemin(node) + "\n";
     }
     return texte;
   }
-  
+
   /**
-   * La méthode sauvegarderTexte permet de sauvegarder l'ensemble des dossiers et fichiers au format texte
+   * Convertit tout le système en texte
    */
   String sauvegarderTexte() {
     if (racine == null) return "";
+
     String texte = "";
     ArrayList<Node> pile = new ArrayList<Node>();
     pile.add(racine);
+
     while (pile.size() > 0) {
       Node node = pile.remove(pile.size() - 1);
+
+      // Ajoute les enfants à la pile
       if (node.enfants != null) {
-        for (Node e : node.enfants) {
+        for (Node e : node.enfants.values()) {
           pile.add(e);
         }
       }
+
       String chemin = getChemin(node);
-      chemin = chemin.replace(';', char(4)); // Les séparateurs sont des ";" alors on remplace les ";" par un caharactère impossible à écrire
+
+      // Remplace ';' pour éviter conflit
+      chemin = chemin.replace(';', char(4));
+
       int isDir = node.estDossier ? 1 : 0;
+
       String contenu = "";
       if (!node.estDossier && node.contenu != null) {
         contenu = node.contenu.replace("\n", "\\n");
       }
+
+      // Format : chemin;type;contenu
       texte += chemin + ";" + isDir + ";" + contenu + "\n";
     }
+
     return texte;
   }
 
@@ -163,7 +182,7 @@ class SystemFichiers {
   void chargerDepuisString(String[] lignes) {
     // on repart d'une racine propre
     racine = new Node("NitnelavOS", true, null);
-    
+
     for (int i = 0; i < lignes.length; i++) {
       String ligne = lignes[i];
       if (ligne == null || ligne.trim().length() == 0) continue;
@@ -190,15 +209,7 @@ class SystemFichiers {
         String nom = segments[j];
         boolean dernier = (j == segments.length - 1);
 
-        Node existe = null;
-        if (courant.enfants != null) {
-          for (Node e : courant.enfants) {
-            if (e.nom.equals(nom)) {
-              existe = e;
-              break;
-            }
-          }
-        }
+        Node existe = courant.enfants.get(nom);
 
         if (dernier) {
           if (existe == null) {
@@ -222,16 +233,36 @@ class SystemFichiers {
   }
 }
 
+// Sauvegarde dans un fichier texte
 void sauvegarderLeSystemeDeFichier() {
   String data = fichiers.sauvegarderTexte();
   String[] lignes = split(data, '\n');
   saveStrings("data/sauvegarde.txt", lignes);
 }
 
+// Charge depuis un fichier texte
 void chargerLeSystemeDeFichier() {
   String[] lignes = loadStrings("data/sauvegarde.txt");
+
   if (lignes == null) return;
 
+  fichiers.chargerDepuisString(lignes);
+}
 
-  fichiers.chargerDepuisString(lignes); // méthode dans SystemFichiers
+boolean estDescendant(Node parent, Node enfant) {
+  Node courant = parent;
+  while (courant != null) {
+    if (courant == enfant) return true;
+    courant = courant.parent;
+  }
+  return false;
+}
+
+boolean estAncetre(Node a, Node b) {
+  Node courant = b;
+  while (courant != null) {
+    if (courant == a) return true;
+    courant = courant.parent;
+  }
+  return false;
 }

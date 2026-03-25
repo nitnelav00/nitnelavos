@@ -20,7 +20,7 @@ float scaleMin; // le minimum des deux
 
 boolean[] touchesAppuyes; // liste des touches appuyées
 boolean touche; // savoir si une touche viens d'être pressée
-char lettreAppuyee = 65535; // la lettre qui viens juste d'être pressée (utile pour que l'utilisateur puisse écrire du texte dans le terminal)
+char lettreAppuyee = 65535; // la lettre qui viens juste d'être pressée (utile pour que l'utilisateur puisse écrire du texte dans le terminal) (65535 = -1)
 boolean lettre; // savoir si une lettre viens d'être pressé
 
 void setup() {
@@ -48,7 +48,7 @@ void setup() {
   fondEcran.image(fondEcranImage, 0, 0, width, height);
   fondEcran.endDraw();
   print("chargé\n");
-  
+
   fondFlappy = loadImage("flappy/fond.png");
   solFlappy = loadImage("flappy/sol.png");
   tuyauFlappy = loadImage("flappy/tuyau.png");
@@ -64,12 +64,12 @@ void setup() {
 void draw() {
   if (frameCount <= 1)
     return;
-   
+
   if (fondSale) {
     image(fondEcran, 0, 0); // Redessiner le fond si l'écran est sale
     fondSale = false;
   }
-  
+
 
   /* Les fenetres à dértuire sont listé selon leur Id et sont détruites au début de la boucle */
   if (aDetruire.size() > 0) {
@@ -77,7 +77,7 @@ void draw() {
     aDetruire.remove(0);
     redraw();
   }
-  
+
   /**
    * On fait une boucle pour savoir quelle fenêtre obtient le focus
    */
@@ -87,7 +87,7 @@ void draw() {
     if (fenetres.get(i).sourisDansFenetre() && focus == -1)
       focus = i;
   }
-  
+
   /**
    * La fenetre qui obtien le focus de l'utilsateur en passant sa souris dessus est placée au premier plan
    */
@@ -101,7 +101,7 @@ void draw() {
   for (int i = fenetres.size() - 1; i>=0; i--) {
     fenetres.get(i).draw();
   }
-  
+
   // change le titre de la fenêtre pour afficher les fps (utile pour l'optimisation)
   windowTitle("Programme de Valentin, FPS:" + nf(frameRate, 0, 1));
   menu();
@@ -176,7 +176,6 @@ boolean mouseInRect(float x, float y, float w, float h) {
  * Cette fonction est appelée à la fermeture du programme
  */
 void exit() {
-  println(fichiers.tree(fichiers.racine));
   sauvegarderLeSystemeDeFichier();
   super.exit();
 }
