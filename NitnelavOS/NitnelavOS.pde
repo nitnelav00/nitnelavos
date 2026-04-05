@@ -5,6 +5,9 @@
  * La plupart des variables globales utilisés dans l'entiereté du programme sont définies ici.
  */
 
+import java.util.Base64;
+import java.nio.charset.StandardCharsets;
+
 SystemFichiers fichiers; // Arbre de fichiers de l'OS
 
 ArrayList<Window> fenetres; // Liste des fenêtres actives
@@ -150,7 +153,7 @@ void mousePressed(MouseEvent event) {
  */
 void keyPressed() {
   lettreAppuyee = key;
-  touchesAppuyes[keyCode] = true;
+  touchesAppuyes[abs(keyCode)] = true;
   touche=true;
 }
 

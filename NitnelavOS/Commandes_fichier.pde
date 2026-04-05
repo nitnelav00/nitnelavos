@@ -32,8 +32,8 @@ Node obtenirNode(Node dossierSource, String[] chemin, int longueurChemin, Termin
  * Commande echo
  */
 class CommandeEcho implements Commande {
-  void executer(String[] args, Terminal terminal) {
 
+  void executer(String[] args, Terminal terminal) {
     String texteUtilisateur = "";
     boolean dansFichier = false;
     int fichierDestinationIndex = 0;
@@ -46,8 +46,11 @@ class CommandeEcho implements Commande {
       }
       texteUtilisateur += args[i] + " ";
     }
-    terminal.texte += texteUtilisateur + "\n";
+    
+    terminal.texte += texteUtilisateur.trim().replace("\\n", "\n") + '\n';
+    
     if (dansFichier) {
+      // Ton code existant pour écrire dans le fichier
       Node destination;
       if (args[0].charAt(0) == '/')
         destination = fichiers.racine;
@@ -56,21 +59,38 @@ class CommandeEcho implements Commande {
       String chemin[] = args[fichierDestinationIndex].split("/");
       destination = obtenirNode(destination, chemin, chemin.length - 1, terminal);
 
-      if (destination == null) return;
+      if (destination == null) {
+        terminal.texte += "Erreur : chemin \"" + args[fichierDestinationIndex] + "\" inaccessible.\n";
+        return;
+      }
+      
       if (destination.enfants.get(chemin[chemin.length -1]) == null) {
         destination = fichiers.creerNode(chemin[chemin.length -1], false, destination);
         if (destination == null) {
-          terminal.texte += "Erreur à la création du fichier\n";
+          terminal.texte += "Erreur : impossible de créer le fichier \"" + chemin[chemin.length -1] + "\".\n";
           return;
         }
       }
 
-      destination.contenu = texteUtilisateur;
+      destination.contenu = texteUtilisateur.trim();
+      terminal.texte += "Ecriture dans \"" + args[fichierDestinationIndex] + "\" effectuée.\n";
     }
   }
+
   String getDescription(boolean avecExemples) {
-    if (avecExemples) return "Le texte donné en argument sera affiché dans le Terminal\nIl est possible d'utiliser '>' pour envoyer\n le résultat dans un fichier\nExemple : echo bonjour vous > ./coucou/texte.txt";
-    return "Affiche le texte donné en argument. Utilisez '>' pour écrire dans un fichier";
+    if (avecExemples) {
+      return
+        "Afficher du texte ou l'écrire dans un fichier.\n" +
+        "\n" +
+        "Utilisation :\n" +
+        "  echo <texte>              Affiche le texte\n" +
+        "  echo <texte> > <fichier>  Écrit le texte dans le fichier\n" +
+        "\n" +
+        "Exemples :\n" +
+        "  echo Bonjour le monde\n" +
+        "  echo Salut > ./coucou/texte.txt\n";
+    }
+    return "Afficher du texte (avec redirection '> fichier').";
   }
 }
 
@@ -80,9 +100,12 @@ class CommandeEcho implements Commande {
 class CommandeMkdir implements Commande {
   void executer(String[] args, Terminal terminal) {
     if (args.length == 0) {
-      terminal.texte += "La commande mkdir doit avoir le nom du fichier en argument\n";
+      terminal.texte +=
+        "Erreur : aucun dossier spécifié.\n" +
+        "Usage : mkdir <nom_dossier>\n";
       return;
     }
+
     Node destination;
     if (args[0].charAt(0) == '/')
       destination = fichiers.racine;
@@ -93,15 +116,26 @@ class CommandeMkdir implements Commande {
     destination = obtenirNode(destination, chemin, chemin.length - 1, terminal);
     if (destination == null) return;
 
-    String nom = chemin[chemin.length-1]; // le dernier élément est le nom du fichier a créer
+    String nom = chemin[chemin.length - 1];
     if (fichiers.creerNode(nom, true, destination) != null)
-      terminal.texte += "le fichier " + nom + " a été crée\n";
+      terminal.texte += "Dossier \"" + nom + "\" créé.\n";
     else
-      terminal.texte += "le fichier " + nom + " n'a pas pu être crée\n";
+      terminal.texte += "Erreur : impossible de créer le dossier \"" + nom + "\".\n";
   }
+
   String getDescription(boolean avecExemples) {
-    if (avecExemples) return "Crée un dossier avec le nom et le chemin donné en argument\nExemple : mkdir /bonjour/dossier/../coucou\ncréera un dossier nommé coucou dans le répertoire NitnelavOS/bonjour";
-    return "Crée un dossier avec le nom donné en argument";
+    if (avecExemples) {
+      return
+        "Créer un dossier à l'emplacement indiqué.\n" +
+        "\n" +
+        "Utilisation :\n" +
+        "  mkdir <nom_dossier>\n" +
+        "\n" +
+        "Exemple :\n" +
+        "  mkdir /bonjour/dossier/../coucou\n" +
+        "  crée un dossier nommé coucou dans le répertoire NitnelavOS/bonjour\n";
+    }
+    return "Créer un dossier avec le nom et le chemin donnés en argument.";
   }
 }
 
@@ -112,8 +146,19 @@ class CommandeLs implements Commande {
   void executer(String[] args, Terminal terminal) {
     terminal.texte += terminal.position.listerEnfants() + "\n";
   }
+
   String getDescription(boolean avecExemples) {
-    return "Lister les dossiers et fichiers du dossier courant";
+    if (avecExemples) {
+      return
+        "Lister les fichiers et dossiers du dossier courant.\n" +
+        "\n" +
+        "Utilisation :\n" +
+        "  ls\n" +
+        "\n" +
+        "Exemple :\n" +
+        "  ls\n";
+    }
+    return "Lister les fichiers et dossiers du dossier courant.";
   }
 }
 
@@ -123,9 +168,12 @@ class CommandeLs implements Commande {
 class CommandeCd implements Commande {
   void executer(String[] args, Terminal terminal) {
     if (args.length == 0) {
-      terminal.texte += "La commande cd doit avoir le nom du fichier en argument\n";
+      terminal.texte +=
+        "Erreur : aucun dossier spécifié.\n" +
+        "Usage : cd <chemin>\n";
       return;
     }
+
     Node destination;
     if (args[0].charAt(0) == '/')
       destination = fichiers.racine;
@@ -139,9 +187,23 @@ class CommandeCd implements Commande {
     terminal.position = destination;
     terminal.positionTexte = fichiers.getChemin(destination);
   }
+
   String getDescription(boolean avecExemples) {
-    if (avecExemples) return "Utiliser cette fonction pour se déplacer dans les dossiers\nIl est possible d'utiliser '..' pour revenir en arrière\n'.' pour rester au même niveau\net '/' pour être à la racine";
-    return "Utiliser cette fonction pour se déplacer dans les dossiers";
+    if (avecExemples) {
+      return
+        "Changer de dossier.\n" +
+        "\n" +
+        "Utilisation :\n" +
+        "  cd <chemin>\n" +
+        "\n" +
+        "Exemples :\n" +
+        "  cd dossier\n" +
+        "  cd ../autre_dossier\n" +
+        "  cd /racine/dossier\n" +
+        "  cd .\n" +
+        "  cd ..\n";
+    }
+    return "Changer de dossier à l'aide d'un chemin relatif ou absolu.";
   }
 }
 
@@ -151,9 +213,12 @@ class CommandeCd implements Commande {
 class CommandeRm implements Commande {
   void executer(String[] args, Terminal terminal) {
     if (args.length == 0) {
-      terminal.texte += "La commande rm doit avoir le nom du fichier en argument\n";
+      terminal.texte += 
+        "Erreur : aucun fichier/dossier spécifié.\n" +
+        "Usage : rm <fichier_ou_dossier>\n";
       return;
     }
+    
     Node destination;
     if (args[0].charAt(0) == '/')
       destination = fichiers.racine;
@@ -161,11 +226,30 @@ class CommandeRm implements Commande {
 
     String chemin[] = args[0].split("/");
     destination = obtenirNode(destination, chemin, chemin.length - 1, terminal);
-    if (destination == null) return;
-    destination.enfants.remove(chemin[chemin.length-1]); // le dernier élément est le nom du fichier a retirer
+    if (destination == null) {
+      terminal.texte += 
+        "Erreur : \"" + args[0] + "\" introuvable.\n" +
+        "Vérifiez le chemin avec \"ls\" ou \"tree\".\n";
+      return;
+    }
+    
+    destination.enfants.remove(chemin[chemin.length-1]);
+    terminal.texte += "Fichier/dossier \"" + args[0] + "\" supprimé.\n";
   }
+
   String getDescription(boolean avecExemples) {
-    return "Utiliser cette fonction pour supprimmer un dossier ou fichier";
+    if (avecExemples) {
+      return
+        "Supprimer un fichier ou dossier.\n" +
+        "\n" +
+        "Utilisation :\n" +
+        "  rm <fichier_ou_dossier>\n" +
+        "\n" +
+        "Exemples :\n" +
+        "  rm rapport.txt\n" +
+        "  rm ./coucou/texte.txt\n";
+    }
+    return "Supprimer un fichier ou dossier.";
   }
 }
 
@@ -173,11 +257,36 @@ class CommandeRm implements Commande {
  * Afficher tout les dossiers et fichier
  */
 class CommandeTree implements Commande {
+
   void executer(String[] args, Terminal terminal) {
-    terminal.texte += fichiers.tree(terminal.position);
+    if (args.length != 0) {
+      terminal.texte +=
+        "Erreur : la commande tree ne prend pas d'arguments.\n" +
+        "Usage : tree\n";
+      return;
+    }
+
+    String arbre = fichiers.tree(terminal.position);
+    if (arbre.isEmpty()) {
+      terminal.texte += "Dossier courant vide.\n";
+    } else {
+      terminal.texte += "Arborescence depuis \"" + terminal.position.nom + "\" :\n\n";
+      terminal.texte += arbre + "\n";
+    }
   }
+
   String getDescription(boolean avecExemples) {
-    return "Afficher tout les dossiers et fichier à partir du dossier courant";
+    if (avecExemples) {
+      return
+        "Afficher l'arborescence des dossiers/fichiers depuis le dossier courant.\n" +
+        "\n" +
+        "Utilisation :\n" +
+        "  tree\n" +
+        "\n" +
+        "Exemple :\n" +
+        "  tree\n";
+    }
+    return "Afficher l'arborescence des fichiers/dossiers.";
   }
 }
 
@@ -185,25 +294,44 @@ class CommandeTree implements Commande {
  * Lire le contenu d'un fichier
  */
 class CommandeCat implements Commande {
+
   void executer(String[] args, Terminal terminal) {
     if (args.length == 0) {
-      terminal.texte += "La commande cd doit avoir le nom du fichier en argument\n";
+      terminal.texte +=
+        "Erreur : aucun fichier spécifié.\n" +
+        "Usage : cat <fichier>\n";
       return;
     }
+
     String nomFichier = args[0];
     Node enf = terminal.position.enfants.get(nomFichier);
 
     if (enf != null) {
       if (enf.estDossier) {
-        terminal.texte += "C'est un dossier\n";
+        terminal.texte +=
+          "Erreur : \"" + nomFichier + "\" est un dossier, pas un fichier.\n" +
+          "Utilisez \"ls\" pour lister son contenu.\n";
       } else {
         terminal.texte += enf.contenu + "\n";
       }
     } else {
-      terminal.texte += "Fichier introuvable\n";
+      terminal.texte +=
+        "Erreur : fichier \"" + nomFichier + "\" introuvable.\n" +
+        "Vérifiez le nom ou utilisez \"ls\" pour lister les fichiers.\n";
     }
   }
+
   String getDescription(boolean avecExemples) {
-    return "Lire le contenu d'un fichier";
+    if (avecExemples) {
+      return
+        "Afficher le contenu d'un fichier.\n" +
+        "\n" +
+        "Utilisation :\n" +
+        "  cat <fichier>\n" +
+        "\n" +
+        "Exemple :\n" +
+        "  cat rapport.txt\n";
+    }
+    return "Afficher le contenu d'un fichier.";
   }
 }

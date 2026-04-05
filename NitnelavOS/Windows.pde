@@ -1,4 +1,4 @@
-/** //<>// //<>// //<>// //<>//
+/** //<>// //<>// //<>// //<>// //<>//
  * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2025.
  */
 
@@ -50,7 +50,7 @@ class Window {
   /**
    * Fonction de mise à jour de la fenêtre
    */
-  void update(boolean focus) { //<>//
+  void update(boolean focus) { //<>// //<>//
 
     if (mouseInRect(position.x, position.y, taille.x, 22 * scaleY) && click && focus) // Si l'utilisateur clique sur le bandeau en haut de la fenêtre, elle est en déplacement
       deplacement = true;
@@ -74,7 +74,7 @@ class Window {
 
 
     if (appli != null) {
-      appli.update(mouse, pmouse, taille, focus); // Mettre à jour le programme de l'application //<>//
+      appli.update(mouse, pmouse, taille, focus); // Mettre à jour le programme de l'application //<>// //<>//
       if (affichage == null) {
         affichage = createGraphics(int(taille.x), int(taille.y), P2D);
         println("erreur affichage");

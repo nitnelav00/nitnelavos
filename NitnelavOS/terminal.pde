@@ -27,6 +27,7 @@ class Terminal implements GUIApp {
   Node position;          // Le dossier courant
   String positionTexte;   // le nom du dossier courant
   HashMap<String, Commande> commandes;
+  Env lispEnv;
 
   PVector setup(int id) {
     this.id = id;
@@ -34,6 +35,8 @@ class Terminal implements GUIApp {
     font = createFont("Comfortaa Bold", 14);
     position = fichiers.racine; // Le dossier courant est la racine quand il viens d'être crée
     positionTexte = fichiers.getChemin(position);
+    
+    this.lispEnv = lispStandardEnv(this);
 
     commandes = new HashMap<String, Commande>();
 
@@ -52,6 +55,8 @@ class Terminal implements GUIApp {
     commandes.put("tree", new CommandeTree());
     commandes.put("run", new CommandeRun());
     commandes.put("rm", new CommandeRm());
+    commandes.put("base64", new CommandeBase64());
+    commandes.put("lisp", new CommandeLisp());
 
     return new PVector(600, 600); // le terminal à une talle de 600x600 px
   }

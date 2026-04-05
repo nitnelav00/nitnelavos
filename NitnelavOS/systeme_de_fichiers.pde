@@ -121,22 +121,37 @@ class SystemFichiers {
 
   /**
    * La méthode tree permet d'afficher l'arbre des dossiers, fishiers et sous-dossiers présents dans le Node debut
-   * Utilise un parcours en profondeur
+   * Utilise un parcours en profondeur récursif
    */
   String tree(Node debut) {
-    String texte = "";
-    ArrayList<Node> nodes = new ArrayList();
-    nodes.add(debut);
-    while (nodes.size() > 0) {
-      Node node = nodes.remove(nodes.size()-1);
-      if (node == null || node.enfants == null) continue; // protection
-      for (Node e : node.enfants.values())
-        nodes.add(e);
-      texte += getChemin(node) + "\n";
-    }
-    return texte;
+    StringBuilder texte = new StringBuilder();
+    treeRecursif(debut, "", texte);
+    return texte.toString();
   }
 
+  void treeRecursif(Node node, String prefixe, StringBuilder texte) {
+    // Ligne actuelle
+    String type = node.estDossier ? "[D]" : "[F]";
+    texte.append(prefixe).append(type).append(" ").append(node.nom).append("\n");
+
+    // Si pas d'enfants, s'arrêter
+    if (node.enfants == null || node.enfants.isEmpty()) {
+      return;
+    }
+
+    // Trier les enfants
+    ArrayList<Node> enfants = new ArrayList<>(node.enfants.values());
+    enfants.sort((a, b) -> a.nom.compareToIgnoreCase(b.nom));
+
+    // Générer les branches CORRIGÉES
+    for (int i = 0; i < enfants.size(); i++) {
+      boolean dernier = (i == enfants.size() - 1);
+      String connecteur = dernier ? "\\-- " : "|-- ";
+      String nouveauPrefixe = prefixe + (dernier ? "    " : "|   ");
+
+      treeRecursif(enfants.get(i), nouveauPrefixe + connecteur, texte);
+    }
+  }
   /**
    * Convertit tout le système en texte
    */
@@ -164,10 +179,7 @@ class SystemFichiers {
 
       int isDir = node.estDossier ? 1 : 0;
 
-      String contenu = "";
-      if (!node.estDossier && node.contenu != null) {
-        contenu = node.contenu.replace("\n", "\\n");
-      }
+      String contenu = Base64.getEncoder().encodeToString(node.contenu.getBytes(StandardCharsets.UTF_8)); // Sauvegarder en base64
 
       // Format : chemin;type;contenu
       texte += chemin + ";" + isDir + ";" + contenu + "\n";
@@ -194,7 +206,7 @@ class SystemFichiers {
       cheminComplet = cheminComplet.replace(char(4), ';'); // Même chause qu'à la sauvegarde mais à l'inverse
       boolean isDir = parts[1].equals("1");
       String contenu = parts.length == 3 ? parts[2] : "";
-      contenu = contenu.replace("\\n", "\n");
+      contenu = contenu.length() > 0 ? new String(Base64.getDecoder().decode(contenu)) : ""; // Décoder la base64 pour charger
 
       if (cheminComplet.endsWith("/")) {
         cheminComplet = cheminComplet.substring(0, cheminComplet.length() - 1);
@@ -231,6 +243,49 @@ class SystemFichiers {
       }
     }
   }
+}
+
+Node chercherNodeParChemin(Node racine, String chemin, Terminal terminal) {
+  if (chemin == null || chemin.isEmpty() || chemin.equals("/")) {
+    return racine;
+  }
+  if (chemin.startsWith("/")) {
+    chemin = chemin.substring(1);
+  }
+
+  // découper en segments
+  String[] segments = chemin.split("/");
+  return obtenirNode(racine, segments, segments.length, terminal);
+}
+
+Node chercherFichier(Node racine, String chemin, Terminal terminal) {
+  if (chemin == null || chemin.isEmpty()) return null;
+
+  String[] segments;
+  if (chemin.startsWith("/")) {
+    segments = chemin.substring(1).split("/");
+  } else {
+    segments = chemin.split("/");
+  }
+
+  if (segments.length == 0) return null;
+
+  // le dernier segment est le nom du fichier
+  String nomFichier = segments[segments.length - 1];
+  int pos = chemin.length() - nomFichier.length();
+  if (pos < 1) {
+    terminal.texte += "Error (lisp load): chemin invalide pour " + chemin + "\n";
+    return null;
+  }
+
+  String cheminDossier = chemin.substring(0, pos - 1);  // -1 pour le "/"
+
+  Node nodeDossier = chercherNodeParChemin(racine, cheminDossier, terminal);
+  if (nodeDossier == null || !nodeDossier.estDossier) {
+    return null;
+  }
+
+  return nodeDossier.enfants.get(nomFichier);
 }
 
 // Sauvegarde dans un fichier texte
