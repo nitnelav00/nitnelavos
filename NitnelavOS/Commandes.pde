@@ -362,14 +362,14 @@ class CommandeLisp implements Commande {
 
   public void executer(String[] args, Terminal terminal) {
     if (args.length == 0) {
-      terminal.texte += "Usage: lisp <expr>        → exécute une expression Lisp\n";
-      terminal.texte += "       lisp load <chemin>  → charge un fichier Lisp depuis l'OS\n";
+      terminal.texte += "Utilisation: lisp <expr>        → exécute une expression Lisp\n";
+      terminal.texte += "             lisp load <chemin>  → charge un fichier Lisp depuis l'OS\n";
       return;
     }
 
     if (args[0].equals("load")) {
       if (args.length < 2) {
-        terminal.texte += "Usage: lisp load <chemin>\n";
+        terminal.texte += "Utilisation: lisp load <chemin>\n";
         return;
       }
 
@@ -443,13 +443,13 @@ class CommandeLisp implements Commande {
 
   public String getDescription(boolean avecExemples) {
     if (avecExemples) {
-      return "lisp    : exécuter ou charger des expressions LISP\n" +
+      return "exécuter ou charger des expressions LISP\n" +
         "          Exemples:\n" +
         "            lisp (+ 2 3 4)\n" +
         "            lisp (list 1 2 3)\n" +
         "            lisp load ./test.lisp";
     } else {
-      return "lisp    : exécuter ou charger des expressions LISP";
+      return "exécuter ou charger des expressions LISP";
     }
   }
 }
