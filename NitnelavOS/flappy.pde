@@ -1,5 +1,5 @@
 /**
- * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2026.
+ * Programme crée par Nitnelav00 en 2026.
  */
 
 PImage fondFlappy; // Le fond qui défile

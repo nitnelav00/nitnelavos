@@ -1,5 +1,5 @@
 /**
- * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2026.
+ * Programme crée par Nitnelav00 en 2026.
  *
  * Implémentation du cours n°13 de prossessing 101
  */

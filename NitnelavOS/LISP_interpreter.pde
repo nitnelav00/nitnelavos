@@ -1,5 +1,5 @@
 /**
- * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2026.
+ * Programme crée par Nitnelav00 en 2026.
  *
  * L'interpréteur LISP a été inspiré par https://norvig.com/lispy.html
  * pour avoir une possibilité de faire des scripts dans l'OS

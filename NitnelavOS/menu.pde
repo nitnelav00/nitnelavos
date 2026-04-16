@@ -1,5 +1,5 @@
 /**
- * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2025.
+ * Programme crée par Nitnelav00 en 2025.
  */
 
 String []apps = {"Terminal", "AppTest", "Fractal", "Cours_13", "Flappy"}; // Liste des applications disponibles

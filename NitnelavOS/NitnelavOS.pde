@@ -1,5 +1,5 @@
 /**
- * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2025.
+ * Programme crée par Nitnelav00 en 2025.
  *
  * Comme c'est le fichier principal il y a des fonctions de base comme setup(), draw() etc.
  * La plupart des variables globales utilisés dans l'entiereté du programme sont définies ici.

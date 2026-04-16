@@ -1,5 +1,5 @@
 /**
- * Programme crée par Couard Añó Presencía Valentin, L1 MIPSI en 2026.
+ * Programme crée par Nitnelav00 en 2026.
  *
  * Les commandes utilisé par l'utilisateur pour naviguer et modifier les fichiers et dossiers de l'OS
  */
