@@ -1,3 +1,3 @@
 # nitnelavos
 
-Un programme qui ressemble à un OS fait sur Processing
+Un programme simulateur d'OS fait sur processing.
