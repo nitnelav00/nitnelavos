@@ -199,7 +199,7 @@ Object lispEval(Object x, Env env) {
     String opStr = (String)operateur;
 
     // ---------
-    // define
+    // define -> Fonction ou variable
     // ---------
     if (opStr.equals("define")) {
       if (lst.size() < 3) {
@@ -241,7 +241,7 @@ Object lispEval(Object x, Env env) {
     }
 
     // ------
-    // lambda -> Foncedure
+    // lambda -> Fonction / procedure
     // ------
     if (opStr.equals("lambda")) {
       if (lst.size() < 3) {

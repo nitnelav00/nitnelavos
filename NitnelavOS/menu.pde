@@ -31,7 +31,7 @@ void creerApp(String nom, PVector pos) {
 }
 
 /**
- * La bare du menu est sensé être en bas et utilisée pour lancer les programmes.
+ * La bare du menu est censé être en bas et utilisée pour lancer les programmes.
  */
 void menu() {
   //panic("non implémenté");

@@ -60,7 +60,7 @@ class Window {
       && pmouseY >= position.y
       && pmouseY <= position.y + 22 * scaleY
       && mousePressed &&
-      deplacement) {
+        deplacement) {
       position.x += mouseX - pmouseX;
       position.y += mouseY - pmouseY;
       redraw(); // ne pas oublier de redessiner le fon d'écran pour le pas laisser des traces

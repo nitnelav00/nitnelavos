@@ -57,6 +57,7 @@ class Fractal implements GUIApp { // Ne fonctionne pas encore
   int PRECISION=800;
   int DIST = 200;
   float randomColor = 0;
+  PVector av;
 
   String getname() {
     return "Fractal";
@@ -76,15 +77,18 @@ class Fractal implements GUIApp { // Ne fonctionne pas encore
     else while ((400*400)%espacesEntrePixels!=1)  // Pour être sûr que tous les pixels seront dessinés
       espacesEntrePixels+=1;
     randomColor = random(0., 12.);
+    av = new PVector(1,1);
     return new PVector(400, 400);
   };
 
-  void update(PVector mouse, PVector pmouse, PVector taille, boolean focus) { // Rien
+  void update(PVector mouse, PVector pmouse, PVector taille, boolean focus) {
+    av = new PVector((mouse.x / 400) * 4. - 2., (mouse.y / 400) * 4. - 2.);
   };
 
   void draw(PGraphics pg, float width, float height) {
-    if (width*height <= pixelsCalcules) // Si la fractale a finie de se faire dessiner inutile de continuer
-      return;
+    //if (width*height <= pixelsCalcules) // Si la fractale a finie de se faire dessiner inutile de continuer
+    //  return;
+    pixelsCalcules = pixelsCalcules% int(width*height);
 
     float x, y;
     pg.strokeCap(PROJECT); // Sinon ça fait des bugs d'affichage
@@ -98,7 +102,7 @@ class Fractal implements GUIApp { // Ne fonctionne pas encore
       float count = 0;
       for (int j=0; j<PRECISION; j++) {
         b = pow2i(b);
-        b.add(uv);
+        b.add(av);
         if (b.dot(b) > DIST)
           break;
         count += 1.;
